@@ -41,7 +41,8 @@ def load_labels(path: Path) -> dict[str, str]:
     list-form entries is intentional — older /cluster-label runs wrote that
     field name, and we don't want to break tuning against an existing
     labels.json after the rename."""
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig tolerates BOM that PowerShell 5.1 puts on UTF-8 files.
+    with open(path, encoding="utf-8-sig") as f:
         data = json.load(f)
     if isinstance(data, dict):
         return {str(k): str(v) for k, v in data.items()}
@@ -61,7 +62,10 @@ def load_labels(path: Path) -> dict[str, str]:
 
 def load_predictions(path: Path, id_col: str, label_col: str) -> dict[str, str]:
     out = {}
-    with open(path, newline="", encoding="utf-8") as f:
+    # utf-8-sig handles a leading BOM in case the predictions CSV came from
+    # PowerShell's `Set-Content -Encoding utf8`; without it csv.DictReader's
+    # first column header would be `﻿text` and joins would silently miss.
+    with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         for row in reader:
             tid = str(row.get(id_col, "")).strip()

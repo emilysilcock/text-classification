@@ -40,7 +40,8 @@ if hasattr(sys.stderr, "reconfigure"):
 
 
 def _load_labels(path: Path) -> list[dict]:
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig tolerates BOM that PowerShell 5.1 puts on UTF-8 files.
+    with open(path, encoding="utf-8-sig") as f:
         data = json.load(f)
     if isinstance(data, list):
         return [item for item in data if isinstance(item, dict)]
@@ -57,7 +58,8 @@ def _load_labels(path: Path) -> list[dict]:
 def _load_corpus_lookup(path: Path) -> dict[str, str]:
     """Build {id: text} from a corpus.json (the workspace copy written by
     init.py upstream, or any similar [{id, text}, ...] list)."""
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig tolerates BOM that PowerShell 5.1 puts on UTF-8 files.
+    with open(path, encoding="utf-8-sig") as f:
         data = json.load(f)
     if not isinstance(data, list):
         print(f"error: expected a JSON list at {path}", file=sys.stderr)

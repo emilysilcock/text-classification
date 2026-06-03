@@ -132,7 +132,11 @@ def load_categories(path: Path) -> list[dict]:
     if not path.exists():
         print(f"error: categories not found: {path}", file=sys.stderr)
         sys.exit(1)
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig handles both BOM-prefixed and BOM-less UTF-8. PowerShell 5.1
+    # writes BOM by default with `Set-Content -Encoding utf8`, so a hand-
+    # written categories.json may carry one; plain `utf-8` would raise an
+    # opaque JSONDecodeError on byte 0.
+    with open(path, encoding="utf-8-sig") as f:
         data = json.load(f)
     if not isinstance(data, list) or not data:
         print(
@@ -246,7 +250,11 @@ def load_corpus(path: Path, text_col: str, id_col: str | None) -> list[dict]:
 
 def _load_csv(path: Path, text_col: str, id_col: str | None) -> list[dict]:
     out = []
-    with open(path, newline="", encoding="utf-8") as f:
+    # utf-8-sig handles both BOM-prefixed and BOM-less UTF-8. PowerShell 5.1
+    # on Windows writes BOM by default with `Set-Content -Encoding utf8`, so
+    # a hand-written categories.json or hand-edited CSV may carry one;
+    # plain `utf-8` here would raise an opaque JSONDecodeError on byte 0.
+    with open(path, newline="", encoding="utf-8-sig") as f:
         reader = csv.DictReader(f)
         fields = reader.fieldnames or []
         if text_col not in fields:
@@ -269,7 +277,8 @@ def _load_csv(path: Path, text_col: str, id_col: str | None) -> list[dict]:
 
 
 def _load_json(path: Path, text_col: str, id_col: str | None) -> list[dict]:
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig tolerates the BOM that PowerShell 5.1 puts on UTF-8 files.
+    with open(path, encoding="utf-8-sig") as f:
         data = json.load(f)
     if not isinstance(data, list):
         print("error: JSON must be a list of objects", file=sys.stderr)
@@ -301,7 +310,9 @@ def _load_jsonl(path: Path, text_col: str, id_col: str | None) -> list[dict]:
     """JSON-lines: one object per line. Matches the canonical
     ``documents.jsonl`` layout (one ``{id, text, ...}`` per line)."""
     out = []
-    with open(path, encoding="utf-8") as f:
+    # utf-8-sig tolerates a leading BOM (PowerShell 5.1 quirk). Inner lines
+    # cannot carry a BOM on their own, so only the file-level prefix matters.
+    with open(path, encoding="utf-8-sig") as f:
         for i, line in enumerate(f):
             line = line.strip()
             if not line:

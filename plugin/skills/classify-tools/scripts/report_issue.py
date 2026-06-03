@@ -103,7 +103,7 @@ def _categories_summary(workspace: Path) -> dict | None:
     if not cat_path.exists():
         return None
     try:
-        with open(cat_path, encoding="utf-8") as f:
+        with open(cat_path, encoding="utf-8-sig") as f:
             data = json.load(f)
     except (OSError, json.JSONDecodeError):
         return None
@@ -134,7 +134,7 @@ def _last_run_errors(workspace: Path, max_errors: int = 10) -> dict | None:
             continue
         latest = csvs[-1]
         try:
-            with open(latest, newline="", encoding="utf-8") as f:
+            with open(latest, newline="", encoding="utf-8-sig") as f:
                 reader = csv.DictReader(f)
                 rows = list(reader)
         except (OSError, csv.Error):
