@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+
+# uv
+.uv/
+
+# Plugin runtime workspace (created when the plugin is exercised on data inside this repo)
+.claude/text-classification/
+.claude/clustering/
+.claude/settings.local.json
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

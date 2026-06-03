@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "text-classification",
+  "version": "0.1.0",
+  "description": "LLM-driven text classification with prompt caching, structured outputs, and async or batch execution. Apply a category set to a corpus, or hand-label and tune a prompt against held-out labels first.",
+  "author": {
+    "name": "Emily Silcock and Simon Löwe",
+    "email": "emilysilcock@fas.harvard.edu"
+  },
+  "repository": "https://github.com/emilysilcock/text-classification",
+  "license": "MIT",
+  "keywords": ["classification", "nlp", "text-analysis", "llm"]
+}
